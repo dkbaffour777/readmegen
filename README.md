@@ -1,1 +1,1 @@
-# professional-readme-generator
+# readmegen (a professional readme generator)
