@@ -60,7 +60,7 @@ const questions = [
     {
         type: 'input',
         name: 'installationSteps',
-        message: `What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running. Seperate each step with an asterisk (*) For example: Installation step 1 * Installation step 2 * Installation step 3... \n`,
+        message: `What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running. Seperate each step with an asterisk (*) For example: step 1 * step 2 * step 3... \n`,
         validate: installationSteps => {
             if (installationSteps) {
                 return true;
@@ -73,7 +73,7 @@ const questions = [
     {
         type: 'input',
         name: 'usage',
-        message: `Provide instructions and examples for use. Include screenshots as needed. Break down instructions into steps. Seperate each step with an asterisk (*)\n Be sure to have an 'assets/images' folder in your repository where screenshots will be saved.\n Put the name of the screenshot with its file extension in double quotes \n Your entry should be in this format(Add as many instructions/screenshots desired):\n Instruction step 1 * "screenshotExample1.PNG" * Instruction step 2 * "screenshotExample2.PNG" * Instruction step 3... \n`,
+        message: `Provide instructions and examples for use. Include screenshots as needed. Break down instructions into steps. Seperate each step with an asterisk (*)\n Be sure to have an 'assets/images/<yourscreenshot>' root folder in your repository where your screenshots will be located.\n Put the name of the screenshot with its file extension in single quotes \n Your entry should be in this format(Add as many steps/screenshots desired):\n step 1 * 'alt text,screenshotExample1.PNG' * step 2 * 'alt text,screenshotExample2.PNG' * step 3... \n`,
         validate: installationSteps => {
             if (installationSteps) {
                 return true;
@@ -106,7 +106,7 @@ const questions = [
     {
         type: 'input',
         name: 'tests',
-        message: `Go the extra mile and write tests for your application. Then provide examples on how to run them. \n Use same format: step 1 * step 2 * "screenshotExample.png" (only add if you wish) * step 3...\n`,
+        message: `Go the extra mile and write tests for your application. Then provide examples on how to run them. \n Use the same format: step 1 * 'alt text,screenshotExample1.PNG' * step 2 * 'alt text,screenshotExample2.PNG' * step 3...\n`,
         validate: installationSteps => {
             if (installationSteps) {
                 return true;
@@ -117,28 +117,57 @@ const questions = [
         }
     },
     {
+        type: 'confirm',
+        name: 'confirmLicense',
+        message: `Do you want add a license to your project?`,
+        default: true,
+    },
+    {
         type: 'list',
         name: 'license',
         message: 'What type of license do you prefer?',
         choices: [
             'Apache 2.0 License', // [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-            'Boost Software License 1.0', // [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
-            'Eclipse Public License 1.0', // [![License](https://img.shields.io/badge/License-EPL%201.0-red.svg)](https://opensource.org/licenses/EPL-1.0)
-            'GNU GPL v3 ', // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-            'IBM Public License Version 1.0', // [![License: IPL 1.0](https://img.shields.io/badge/License-IPL%201.0-blue.svg)](https://opensource.org/licenses/IPL-1.0)
+            'GNU GPL v3 License', // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
             'The MIT License', // [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-            'Mozilla Public License 2.0', // [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
         ],
+        when: ({ confirmLicense }) => confirmLicense,
         filter: (val) => {
             return val.toLowerCase();
         },
+    },
+    {
+        type: 'input',
+        name: 'username',
+        message: `Please enter your GitHub username: (Required)`,
+        validate: username => {
+            if (username) {
+                return true;
+            } else {
+                console.log('Please fill out your username!');
+                return false;
+            }
+        }
+    },
+    {
+        type: 'input',
+        name: 'email',
+        message: `Please enter your email: (Required)`,
+        validate: email => {
+            if (email) {
+                return true;
+            } else {
+                console.log('Please fill out your email!');
+                return false;
+            }
+        }
     },
 ];
 
 
 // TODO: Create a function to write README file
 function writeToFile(fileName, data) {
-    fs.writeFile(fileName, data, ()=> console.log("Success! \n Check the 'dist' folder for your README.md file!"));
+    fs.writeFile(fileName, data, ()=> console.log("Success! Check the 'dist' folder for your README.md file!"));
 }
 
 
@@ -147,10 +176,11 @@ function writeToFile(fileName, data) {
 function init() {
     inquirer.prompt(questions)
         .then(answers => {
-           const data = generateMarkdown(answers);
-           writeToFile('./dist/README.md', data);
+            const data = generateMarkdown(answers);
+            writeToFile('./dist/README.md', data);
         })
 }
 
 // Function call to initialize app
 init();
+
